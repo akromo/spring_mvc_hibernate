@@ -15,7 +15,7 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.akromo")  //???
+@ComponentScan(basePackages = "com.akromo")
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setApplicationContext(applicationContext);
-        templateResolver.setPrefix("/WEB-INF/templates/");
+        templateResolver.setPrefix("/WEB-INF/resource/templates/");
         templateResolver.setSuffix(".html");
         return templateResolver;
     }
