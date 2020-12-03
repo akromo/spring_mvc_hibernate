@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
@@ -16,6 +18,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                           HttpServletResponse httpServletResponse,
                                           Authentication authentication) throws IOException, ServletException {
-        httpServletResponse.sendRedirect("/users");
+        if(authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            httpServletResponse.sendRedirect("/admin");
+        }else {
+            httpServletResponse.sendRedirect("/user");
+        }
+
     }
 }
