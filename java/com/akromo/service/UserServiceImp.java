@@ -3,13 +3,16 @@ package com.akromo.service;
 import com.akromo.dao.UserDao;
 import com.akromo.models.User;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-public class UserServiceImp implements UserService {
+public class UserServiceImp implements UserService, UserDetailsService {
 
     private final UserDao userDao;
 
@@ -37,6 +40,12 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
+    public User getUserByName(String name) {
+        return userDao.getUserByName(name);
+    }
+
+    @Transactional
+    @Override
     public void remove(long id) {
         userDao.remove(id);
     }
@@ -45,5 +54,15 @@ public class UserServiceImp implements UserService {
     @Override
     public List<User> listUsers() {
         return  userDao.listUsers();
+    }
+
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = getUserByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+        }
+        return user;
     }
 }

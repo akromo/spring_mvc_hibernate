@@ -1,24 +1,40 @@
 package com.akromo.config;
 
 import com.akromo.config.handler.LoginSuccessHandler;
+import com.akromo.dao.UserDaoImp;
+import com.akromo.service.UserService;
+import com.akromo.service.UserServiceImp;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private UserService userService;
 
-    @Override
-    public void  configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN","USER");
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
+
+//    @Override
+//    public void  configure(AuthenticationManagerBuilder auth) throws Exception {
+//
+//        auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN","USER");
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,8 +64,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //страницы аутентификаци доступна всем
                 .antMatchers("/login").anonymous()
+                .antMatchers("/user/**").access("hasAnyRole('ADMIN','USER')").anyRequest().authenticated();
                 // защищенные URL
-                .antMatchers("/admin").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
+                //.antMatchers("/admin/**").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
+    }
+
+    @Bean
+    public JdbcUserDetailsManager users(DataSource dataSource) {
+        return new JdbcUserDetailsManager(dataSource);
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userService);
+        return daoAuthenticationProvider;
     }
 
     @Bean

@@ -4,7 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -13,11 +13,17 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
+
+    @Column(name = "password")
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -25,6 +31,18 @@ public class User implements UserDetails {
     public User(String username, String email) {
         this.username = username;
         this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 
     public long getId() {
@@ -45,39 +63,57 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return getRoles();
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     public String getUsername() {
         return username;
     }
 
+    public String rolesToString() {
+        if(roles == null) {
+            roles = new HashSet<>();
+        }
+        StringBuilder result = new StringBuilder("");
+        for (Role r: roles) {
+            result.append(r.getName());
+            result.append(", ");
+        }
+        result.delete(result.length()-2, result.length()-1);
+        return result.toString();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Id %d Username %s", id, username);
     }
 }
