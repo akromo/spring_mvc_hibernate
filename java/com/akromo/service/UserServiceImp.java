@@ -1,6 +1,7 @@
 package com.akromo.service;
 
 import com.akromo.dao.UserDao;
+import com.akromo.models.Role;
 import com.akromo.models.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-@Transactional
+
+
 @Service
+@Transactional
 public class UserServiceImp implements UserService, UserDetailsService {
 
     private final UserDao userDao;
@@ -32,7 +35,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     @Override
     public User getUser(Long id) {
-        return  userDao.getUser(id);
+        return userDao.getUser(id);
     }
 
     @Override
@@ -47,7 +50,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     @Override
     public List<User> listUsers() {
-        return  userDao.listUsers();
+        return userDao.listUsers();
     }
 
     @Override
@@ -57,5 +60,15 @@ public class UserServiceImp implements UserService, UserDetailsService {
             throw new UsernameNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
+    }
+
+    @Override
+    public List<Role> getAllRoles() {
+        return userDao.getAllRoles();
+    }
+
+    @Override
+    public Role getRoleByName(String name) {
+        return userDao.getRoleByName(name);
     }
 }

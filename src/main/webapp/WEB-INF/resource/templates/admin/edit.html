@@ -50,9 +50,8 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="role">Role </label>
-                    <select class="custom-select d-block w-100" id="role" name="role">
-                        <option value="User">User</option>
-                        <option value="Admin">Admin</option>
+                    <select class="custom-select d-block w-100" id="role" name="selectedRoles" multiple required>
+                        <option th:each="role : ${BDroles}" th:text="${role.getName()}" th:value="${role.getName()}"></option>
                     </select>
                 </div>
             </div>

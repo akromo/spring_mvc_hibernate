@@ -1,8 +1,10 @@
 package com.akromo.dao;
 
+import com.akromo.models.Role;
 import com.akromo.models.User;
 
 import java.util.List;
+
 
 public interface UserDao {
     public void add(User user);
@@ -17,4 +19,7 @@ public interface UserDao {
 
     public List<User> listUsers();
 
+    public List<Role> getAllRoles();
+
+    public Role getRoleByName(String name);
 }

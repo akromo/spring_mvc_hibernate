@@ -5,6 +5,7 @@ import com.akromo.dao.UserDaoImp;
 import com.akromo.service.UserService;
 import com.akromo.service.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,7 +25,6 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
-
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -64,8 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //страницы аутентификаци доступна всем
                 .antMatchers("/login").anonymous()
-                .antMatchers("/user/**").access("hasAnyRole('ADMIN','USER')")
                 // защищенные URL
+                .antMatchers("/user/**").access("hasAnyRole('ADMIN','USER')")
                 .antMatchers("/admin/**").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
     }
 

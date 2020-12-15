@@ -22,8 +22,8 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    private List<Role> roles = new ArrayList<>();
 
     public User() {
     }
@@ -37,11 +37,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Collection<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
@@ -77,7 +77,7 @@ public class User implements UserDetails {
 
     public String rolesToString() {
         if(roles == null) {
-            roles = new HashSet<>();
+            roles = new ArrayList<>();
         }
         StringBuilder result = new StringBuilder("");
         for (Role r: roles) {

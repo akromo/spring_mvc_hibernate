@@ -12,8 +12,11 @@
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">CRUD</h5>
     <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-dark" th:if="${CurrentUser != null} and ${CurrentUser.rolesToString().contains('ROLE_ADMIN')}" href="/admin">Admin</a>
-        <a class="p-2 text-dark" th:if="${CurrentUser != null} and ${CurrentUser.rolesToString().contains('ROLE_USER')}" href="/user">Profile</a>
+        <a class="p-2 text-dark"
+           th:if="${CurrentUser != null} and ${CurrentUser.rolesToString().contains('ROLE_ADMIN')}"
+           href="/admin">Admin</a>
+        <a class="p-2 text-dark" th:if="${CurrentUser != null} and ${CurrentUser.rolesToString().contains('ROLE_USER')} or
+           ${CurrentUser.rolesToString().contains('ROLE_ADMIN')} " href="/user">Profile</a>
         <a class="p-2 text-dark" href="/logout">Logout</a>
     </nav>
 </div>
@@ -49,9 +52,8 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="role">Role </label>
-                    <select class="custom-select d-block w-100" id="role" name="role">
-                        <option value="User" selected>User</option>
-                        <option value="Admin">Admin</option>
+                    <select class="custom-select d-block w-100" id="role" name="selectedRoles" multiple required>
+                        <option th:each="role : ${BDroles}" th:text="${role.getName()}" th:value="${role.getName()}"></option>
                     </select>
                 </div>
             </div>
